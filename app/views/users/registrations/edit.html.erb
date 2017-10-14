@@ -1,52 +1,91 @@
-<div class="slab">
-  <div class="grid">
-    <div class="grid__item width-one-half">
-      <div class="form-card form-card--compact">
-        <div class="form-card__header">
-          <h1 class="form-card__title">Edit account settings</h1>
-        </div>
-        <div class="form-card__content">
-          <%= form_for(resource, as: resource_name, url: user_registration_path, html: { method: :patch }, builder: GcfFormBuilder) do |f| %>
-            <%= f.gcf_input_field :full_name, "Full name", autofocus: true %>
-            <%= f.gcf_input_field :email, "Email" %>
-            <%= f.gcf_input_field :desk_phone_number, "Desk phone number", notes: ["If a client tries to call your ClientComm number, we'll redirect the calls to this number."] %>
-            <div class="form-card__footer">
-              <div class="toolbar">
-                <div class="toolbar__left"><%= f.submit 'Update settings', class: 'button button--cta', role: 'button', name: 'update_settings' %></div>
-                <div class="toolbar__right-responsive">
-                  <%= link_to :back, class: "button" do %>
-                    Cancel
-                  <% end %>
-                </div>
+<div class="container">
+  <div class="card mt-4">
+    <h4 class="card-header">
+      Edit account settings
+    </h4>
+    <div class="card-body">
+      <%= form_for(resource, as: resource_name, url: user_registration_path, html: { method: :patch }) do |f| %>
+        <div class="form-group">
+          <%= f.label :full_name, 'Full name' %>
+          <%= f.text_field :full_name, class: "form-control #{'is-invalid' if resource.errors.messages[:full_name].any?}" %>
+          <% if resource.errors.messages[:full_name].any? %>
+            <% resource.errors.messages[:full_name].each do |message| %>
+              <div class="invalid-feedback">
+                <%= message %>
               </div>
-            </div>
+            <% end %>
           <% end %>
         </div>
-      </div>
+        <div class="form-group">
+          <%= f.label :email, 'Email' %>
+          <%= f.email_field :email, class: "form-control #{'is-invalid' if resource.errors.messages[:email].any?}" %>
+          <% if resource.errors.messages[:email].any? %>
+            <% resource.errors.messages[:email].each do |message| %>
+              <div class="invalid-feedback">
+                <%= message %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+        <div class="form-group">
+          <%= f.label :desk_phone_number, 'Phone Number' %>
+          <small class="form-text text-muted">If a client tries to call your ClientComm number, we'll redirect the calls to this number.</small>
+          <%= f.text_field :desk_phone_number, class: "form-control #{'is-invalid' if resource.errors.messages[:desk_phone_number].any?}" %>
+          <% if resource.errors.messages[:desk_phone_number].any? %>
+            <% resource.errors.messages[:desk_phone_number].each do |message| %>
+              <div class="invalid-feedback">
+                <%= message %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+        <%= f.submit 'Update settings', class: 'btn btn-primary', role: 'button', name: 'update_settings' %>
+      <% end %>
     </div>
-    <div class="grid__item width-one-half">
-      <div class="form-card form-card--compact">
-        <div class="form-card__header">
-          <h1 class="form-card__title">Change password</h1>
-        </div>
-        <div class="form-card__content">
-          <%= form_for(resource, as: resource_name, url: user_registration_path, html: { method: :patch }, builder: GcfFormBuilder) do |f| %>
-            <%= f.gcf_input_field(:current_password, "Current password", type: "password") %>
-            <%= f.gcf_input_field(:password, "New password", type: "password", notes: "This should be at least 6 characters.") %>
-            <%= f.gcf_input_field(:password_confirmation, "Confirm new password", type: "password") %>
-            <div class="form-card__footer">
-              <div class="toolbar">
-                <div class="toolbar__left"><%= f.submit 'Change password', class: 'button button--cta', role: 'button', name: 'change_password' %></div>
-                <div class="toolbar__right-responsive">
-                  <%= link_to :back, class: "button" do %>
-                    Cancel
-                  <% end %>
-                </div>
+  </div>
+
+  <div class="card mt-4">
+    <h4 class="card-header">
+      Change password
+    </h4>
+    <div class="card-body">
+      <%= form_for(resource, as: resource_name, url: user_registration_path, html: { method: :patch }) do |f| %>
+        <div class="form-group">
+          <%= f.label :current_password, 'Current password' %>
+          <%= f.password_field :current_password, class: "form-control #{'is-invalid' if resource.errors.messages[:current_password].any?}" %>
+          <% if resource.errors.messages[:current_password].any? %>
+            <% resource.errors.messages[:current_password].each do |message| %>
+              <div class="invalid-feedback">
+                <%= message %>
               </div>
-            </div>
+            <% end %>
           <% end %>
         </div>
-      </div>
+        <div class="form-group">
+          <%= f.label :password, 'New password' %>
+          <small class="form-text text-muted">Must be at least 6 characters.</small>
+          <%= f.password_field :password, class: "form-control #{'is-invalid' if resource.errors.messages[:password].any?}" %>
+          <% if resource.errors.messages[:password].any? %>
+            <% resource.errors.messages[:password].each do |message| %>
+              <div class="invalid-feedback">
+                <%= message %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+        <div class="form-group">
+          <%= f.label :password_confirmation, 'Confirm new password' %>
+          <%= f.password_field :password_confirmation, class: "form-control #{'is-invalid' if resource.errors.messages[:password_confirmation].any?}" %>
+          <% if resource.errors.messages[:password_confirmation].any? %>
+            <% resource.errors.messages[:password_confirmation].each do |message| %>
+              <div class="invalid-feedback">
+                <%= message %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+        <%= f.submit 'Change password', class: 'btn btn-primary', role: 'button', name: 'change_password' %>
+      <% end %>
     </div>
   </div>
 </div>

@@ -4,7 +4,7 @@
 
 var Messages = {
   init: function() {
-    this.msgs = $('#message-list');
+    this.msgs = $('.messages-list');
   },
   appendMessage: function(message_html) {
     // append the message to the bottom of the list

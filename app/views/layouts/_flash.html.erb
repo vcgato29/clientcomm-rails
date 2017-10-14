@@ -1,6 +1,8 @@
-<div class="flash-container" id="dismiss-notice">
-  <div class="<%= classes.join ' ' %>">
-    <p class="flash__message"><% if local_assigns[:link_to] %><a href="<%= link_to %>"><%= body %></a><% else %><%= body %><% end %></p>
-    <a href="#dismiss-notice" class="flash__dismiss no-underline"><span class="icon icon-close"></span></a>
+<div class="container mt-4">
+  <div class="alert <%= alert_type %> alert-dismissible fade show" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <%= body %>
   </div>
 </div>

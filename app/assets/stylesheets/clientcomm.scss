@@ -1,0 +1,23 @@
+.messages-header {
+  
+}
+
+.messages-list {
+  margin-bottom: 70px;
+}
+
+.messages-form {
+  border-top: 2px solid #EAEAE9;
+}
+
+.message-card {
+  color: #FAFAF9;
+  border-radius: 10px 10px 0px 10px;
+
+  &.inbound {
+    color: #333333;
+    border-radius: 10px 10px 10px 0px;
+  }
+}
+
+

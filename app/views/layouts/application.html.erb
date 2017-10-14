@@ -14,54 +14,49 @@
     <%= content_for(:head) if content_for?(:head) %>
   </head>
   <body<% if content_for?(:template_name) %> class="template--<%= content_for(:template_name) %>"<% end %><% if user_signed_in? %> data-user-id="<%= current_user.id %>"<% end %>>
-    <% if notice %>
-    <%= render partial: "layouts/flash", locals: {classes: ['flash'], body: notice} %>
-    <% end %>
 
-    <% if alert %>
-    <%= render partial: "layouts/flash", locals: {classes: ['flash', 'flash--error'], body: alert} %>
-    <% end %>
-
-    <nav class="navbar navbar-default navbar-static-top" role="navigation">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container">
-        <div class="navbar-header main-header__title">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mobile-nav-dropdown" aria-expanded="false">
-            <span class="sr-only">Toggle navigation</span>
-            Menu
-          </button>
-          <div class="toolbar__left">
-            <a class="navbar-brand main-header__site-title" href="/">
-              ClientComm
-            </a>
-            <p class="navbar-text user-phone-number hidden-xs"><%= @clientcomm_phone_number %></p>
-          </div>
-        </div>
+        <%= link_to 'ClientComm', root_path, class: 'navbar-brand' %>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+        </button>
 
-        <div class="collapse navbar-collapse" id="mobile-nav-dropdown">
-          <% if current_user %>
-            <ul class="nav navbar-nav navbar-right text--small hidden-xs">
-              <li class="<%= 'active' if controller_name == 'clients'%>"><%= link_to "My Clients", clients_path, class: ['no-underline'] %></li>
-              <% if FeatureFlag.enabled? 'templates' %><li class="<%= 'active' if controller_name == 'templates'%>"><%= link_to "Templates", templates_path, class: ['no-underline'] %></li><% end %>
-              <li class="dropdown <%= 'active' if controller_name == 'registrations'%>">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account <span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    <li class="<%= 'active' if controller_name == 'registrations'%>"><%= link_to "Account settings", edit_user_registration_path, class: ['no-underline'] %></li>
-                    <li role="separator" class="divider"></li>
-                    <li><%= link_to "Log out #{current_user.full_name}", destroy_user_session_path, class: ['no-underline'], :method => :delete %></li>
-                  </ul>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <span class="navbar-text">
+            <%= @clientcomm_phone_number %>
+          </span>
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <%= link_to 'My Clients', clients_path, class: 'nav-link' %>
+            </li>
+            <% if FeatureFlag.enabled? 'templates' %>
+              <li class="nav-item">
+                <%= link_to 'Templates', templates_path, class: 'nav-link' %>
               </li>
-            </ul>
-            <ul class="nav navbar-nav text--small hidden-sm hidden-md hidden-lg">
-              <li class="<%= 'active' if controller_name == 'clients'%>"><%= link_to "My Clients", clients_path, class: ['no-underline'] %></li>
-              <% if FeatureFlag.enabled? 'templates' %><li class="<%= 'active' if controller_name == 'templates'%>"><%= link_to "Templates", templates_path, class: ['no-underline'] %></li><% end %>
-              <li class="<%= 'active' if controller_name == 'registrations'%>"><%= link_to "Account settings", edit_user_registration_path, class: ['no-underline'] %></li>
-              <hr>
-              <li><%= link_to "Log out #{current_user.full_name}", destroy_user_session_path, class: ['no-underline'], :method => :delete %></li>
-            </ul>
-          <% end %>
+            <% end %>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Account
+              </a>
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                <%= link_to 'Account settings', edit_user_registration_path, class: 'dropdown-item' %>
+                <div class="dropdown-divider"></div>
+                <%# <%= link_to "Log out #{current_user.full_name}", destroy_user_session_path, class: 'dropdown-item' %1> %>
+              </div>
+            </li>
+          </ul>
         </div>
       </div>
     </nav>
+
+    <% if notice %>
+    <%= render partial: "layouts/flash", locals: {alert_type: 'alert-success', body: notice} %>
+    <% end %>
+
+    <% if alert %>
+    <%= render partial: "layouts/flash", locals: {alert_type: 'alert-danger', body: alert} %>
+    <% end %>
 
     <div class="page-wrapper">
       <%= content_for?(:content) ? yield(:content) : yield %>

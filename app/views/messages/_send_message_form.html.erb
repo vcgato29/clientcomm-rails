@@ -1,41 +1,45 @@
-<section class="message--create">
-  <div class="grid">
-    <% if @messages_scheduled.count > 0 %>
-      <%= render "messages/scheduled_messages_link", count: @messages_scheduled.count, client: @client %>
-    <% end %>
-  </div>
+<div class="container">
+  <%= form_for Message.new, remote: true do |f| %>
+    <div class="form-row justify-content-center">
+      <input name="client_id" class="d-none" type="hidden" value="<%= @client.id %>">
 
-  <div class="sendbar">
-    <div class="grid">
-      <%= form_for Message.new, remote: true do |f| %>
-        <input name="client_id" type="hidden" value="<%= @client.id %>">
-
-        <div class="grid__item width-two-thirds-lg">
-          <div class="inner-addon right-addon">
-            <%= f.text_area(:body, { autofocus: autofocus, type: 'text', class: 'sendbar__input main-message-input autosize', autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', rows: 1, placeholder: 'Send a text message' }) %>
-            <% if FeatureFlag.enabled?('templates') %>
-            <a tabindex="0"
-              id="template-button"
-              class="no-underline"
-              role="button"
-              data-trigger="focus"
-              data-toggle="popover"
-              data-html="true"
-              data-placement="top"
-              title="<strong>My templates</strong>"
-              data-template-count="<%= @templates.count %>"
-              data-client-id="<%= @client.id %>"
-              data-content='<%= render 'messages/templates' %>'
-            >
-              <i class="icon-insert_comment"></i></a>
-            <% end %>
-          </div>
-        </div>
-        <div id="sendbar-buttons" class="grid__item width-one-third-lg">
-          <button id="send_message" class="sendbar__button button--primary" type="submit">Send</button>
-          <button id="send_later" class="sendbar__button" data-toggle="modal" type="button" data-target="#new-message-modal">Send later</button>
-        </div>
-      <% end %>
+      <div class="form-group col-md-8">
+        <%= f.text_area(:body, { autofocus: autofocus, type: 'text', class: 'form-control autosize', autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', rows: 1, placeholder: 'Send a text message' }) %>
+      </div>
+      <div class="form-group col-md-auto">
+        <button id="send_message" class="btn btn-success" type="submit">Send</button>
+      </div>
+      <div class="form-group col-md-auto">
+        <button id="send_later" class="btn btn-info" data-toggle="modal" type="button" data-target="#new-message-modal">Send later</button>
+      </div>
     </div>
-  </div>
-</section>
+  <% end %>
+</div>
+
+
+
+
+
+
+
+
+<%#       <%= form_for Message.new, remote: true do |f| %1> %>
+<%#         <input name="client_id" type="hidden" value="<%= @client.id %1>"> %>
+<%#             <%= f.text_area(:body, { autofocus: autofocus, type: 'text', class: 'sendbar__input main-message-input autosize', autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', rows: 1, placeholder: 'Send a text message' }) %1> %>
+<%#             <a tabindex="0" %>
+<%#               id="template-button" %>
+<%#               class="no-underline" %>
+<%#               role="button" %>
+<%#               data-trigger="focus" %>
+<%#               data-toggle="popover" %>
+<%#               data-html="true" %>
+<%#               data-placement="top" %>
+<%#               title="<strong>My templates</strong>" %>
+<%#               data-template-count="<%= @templates.count %1>" %>
+<%#               data-client-id="<%= @client.id %1>" %>
+<%#               data-content='<%= render 'messages/templates' %1>' %>
+<%#               >asdlfkj</a> %>
+<%#               <i class="icon-insert_comment"></i></a> %>
+<%#           <button id="send_message" class="sendbar__button button--primary" type="submit">Send</button> %>
+<%#           <button id="send_later" class="sendbar__button" data-toggle="modal" type="button" data-target="#new-message-modal">Send later</button> %>
+<%#       <% end %1> %>

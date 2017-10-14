@@ -1,12 +1,29 @@
-<div class="message--<%= message_inbound_or_outbound(message) %>" id="<%= dom_id(message) %>">
-  <div class="message--content <%= message.twilio_status %>"><%= message.body %>
-  <%= render message.attachments %>
+<%# <div class="message--<%= message_inbound_or_outbound(message) %1>" id="<%= dom_id(message) %1>"> %>
+<%#   <div class="message--content <%= message.twilio_status %1>"><%= message.body %1> %>
+<%#   <%= render message.attachments %1> %>
+<%#   </div> %>
+<%#   <p class="message--label <%= message.twilio_status %1>"> %>
+<%#     <% if message.twilio_status == 'undelivered' %1> %>
+<%#       <%= t('message.status.undelivered') %1> %>
+<%#     <% else %1> %>
+<%#       <%= message.twilio_status %1> <%= message.send_at.to_s(:message_timestamp) %1> %>
+<%#     <% end %1> %>
+<%#   </p> %>
+<%# </div> %>
+
+<div id="<%= dom_id message %>" class="my-1 row <%= message.inbound? ? 'justify-content-start' : 'justify-content-end text-right' %>">
+
+  <div class="col-md-8 col-sm">
+    <div class="message-card d-inline-block p-3 <%= message.inbound ? 'inbound bg-secondary' : 'bg-info' %>">
+      <%= message.body %>
+    </div>
+    <p class="text-secondary">
+      <% if message.twilio_status == 'undelivered' %>
+        <%= t('message.status.undelivered') %>
+      <% else %>
+        <%= message.twilio_status %> <%= message.send_at.to_s(:message_timestamp) %>
+      <% end %>
+    </p>
   </div>
-  <p class="message--label <%= message.twilio_status %>">
-    <% if message.twilio_status == 'undelivered' %>
-      <%= t('message.status.undelivered') %>
-    <% else %>
-      <%= message.twilio_status %> <%= message.send_at.to_s(:message_timestamp) %>
-    <% end %>
-  </p>
+
 </div>
