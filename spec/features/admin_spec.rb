@@ -11,16 +11,12 @@ feature 'Admin features' do
     ENV['UNCLAIMED_EMAIL'] = @unclaimed_email
   end
 
-  scenario 'Admin disables user' do
+  scenario 'Admin creates a new user, transfers clients from an old user, disables the old user, then re-enables the old user' do
     step 'given there is an active user with clients' do
       @user_1 = create :user, active: true
       @client = create :client, user: @user_1, active: true
       @archived_client = create :client, user: @user_1, active: false
       @unclaimed_account = create :user, email: ENV['UNCLAIMED_EMAIL'], full_name: 'Unclaimed'
-    end
-
-    step 'given there is a second user to transfer to' do
-      @user_2 = create :user, active: true, full_name: 'Cat Stevens'
     end
 
     step 'log in to admin panel' do
@@ -42,8 +38,24 @@ feature 'Admin features' do
       expect(page).to have_content 'This user has active clients.'
     end
 
+    step 'admin creates a second user to transfer to' do
+      visit new_admin_user_path
+      newuser = build :user
+      fill_in 'Full name', with: newuser.full_name
+      fill_in 'Email', with: newuser.email
+      fill_in 'Desk phone number', with: newuser.phone_number
+      fill_in 'user_password', with: newuser.password
+      fill_in 'user_password_confirmation', with: newuser.password
+      click_on 'Create User'
+
+      expect(page).to have_content newuser.full_name
+      expect(page).to have_content 'User was successfully created.'
+      @user_2 = User.find_by(full_name: newuser.full_name)
+    end
+
     step 'admin transfers active clients' do
-      click_on 'Clients'
+      # click_on 'Clients' in nav bar
+      find('#clients a').click
       expect(page).to have_css('#page_title', text: 'Clients')
 
       within "tr##{dom_id(@client)}" do

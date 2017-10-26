@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171021000847) do
+ActiveRecord::Schema.define(version: 20171025210034) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -64,18 +64,9 @@ ActiveRecord::Schema.define(version: 20171021000847) do
     t.string "first_name"
     t.string "last_name"
     t.string "phone_number"
-    t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "user_id"
-    t.text "notes"
-    t.datetime "last_contacted_at"
-    t.boolean "has_unread_messages", default: false, null: false
-    t.boolean "has_message_error", default: false, null: false
-    t.bigint "client_status_id"
-    t.index ["client_status_id"], name: "index_clients_on_client_status_id"
     t.index ["phone_number"], name: "index_clients_on_phone_number", unique: true
-    t.index ["user_id"], name: "index_clients_on_user_id"
   end
 
   create_table "delayed_jobs", id: :serial, force: :cascade do |t|
@@ -91,6 +82,13 @@ ActiveRecord::Schema.define(version: 20171021000847) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["priority", "run_at"], name: "delayed_jobs_priority"
+  end
+
+  create_table "departments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "phone_number", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "feature_flags", force: :cascade do |t|
@@ -118,6 +116,20 @@ ActiveRecord::Schema.define(version: 20171021000847) do
     t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
+  create_table "reporting_relationships", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "client_id"
+    t.bigint "client_status_id"
+    t.boolean "active", default: true, null: false
+    t.text "notes"
+    t.datetime "last_contacted_at"
+    t.boolean "has_unread_messages", default: false, null: false
+    t.boolean "has_message_error", default: false, null: false
+    t.index ["client_id"], name: "index_reporting_relationships_on_client_id"
+    t.index ["client_status_id"], name: "index_reporting_relationships_on_client_status_id"
+    t.index ["user_id"], name: "index_reporting_relationships_on_user_id"
+  end
+
   create_table "templates", force: :cascade do |t|
     t.string "title"
     t.text "body"
@@ -142,14 +154,18 @@ ActiveRecord::Schema.define(version: 20171021000847) do
     t.boolean "message_notification_emails", default: true
     t.boolean "active", default: true, null: false
     t.string "phone_number"
+    t.bigint "department_id"
+    t.index ["department_id"], name: "index_users_on_department_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
   add_foreign_key "attachments", "messages"
-  add_foreign_key "clients", "client_statuses"
-  add_foreign_key "clients", "users"
   add_foreign_key "messages", "clients"
   add_foreign_key "messages", "users"
+  add_foreign_key "reporting_relationships", "client_statuses"
+  add_foreign_key "reporting_relationships", "clients"
+  add_foreign_key "reporting_relationships", "users"
   add_foreign_key "templates", "users"
+  add_foreign_key "users", "departments"
 end
