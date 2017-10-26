@@ -4,8 +4,12 @@ FactoryGirl.define do
     sequence(:last_name) { Faker::Name.last_name }
     sequence(:phone_number) { "+1760555#{Faker::PhoneNumber.unique.subscriber_number}" }
 
-    after(:build) do |client|
-      client.users << create(:user)
+    transient do
+      associated_user create(:user)
+    end
+
+    after(:build) do |client, evaluator|
+      client.users << evaluator.associated_user
     end
   end
 end

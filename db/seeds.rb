@@ -20,18 +20,40 @@ puts "Creating Admin User"
 AdminUser.find_or_create_by(email: 'admin@example.com').update!(password: 'changeme', password_confirmation: 'changeme') if Rails.env.development?
 
 puts "Creating Test Users"
-User.find_or_create_by(email: 'test@example.com').update!(full_name: 'Test Example', password: 'changeme')
-User.find_or_create_by(email: ENV['UNCLAIMED_EMAIL']).update!(full_name: 'Unclaimed Email', password: 'changeme')
+test_user = User.find_or_create_by(email: 'test@example.com')
+test_user.update!(full_name: 'Test Example', password: 'changeme', department: nil)
+unclaimed_user = User.find_or_create_by(email: ENV['UNCLAIMED_EMAIL'])
+unclaimed_user.update!(full_name: 'Unclaimed Email', password: 'changeme', department: nil)
+
+
+puts "Deleting Old Records"
+Message.delete_all
+ReportingRelationship.delete_all
+Client.delete_all
+User.where.not(id: [test_user.id, unclaimed_user.id]).delete_all
+Department.delete_all
+
+puts "Creating Departments"
+FactoryGirl.create_list :department, 10
+User.all.each do |user|
+  user.update_attributes(department: Department.all.sample)
+end
 
 puts "Creating Sample Users"
-FactoryGirl.create_list :user, 3
+5.times do
+  FactoryGirl.create :user, department: Department.all.sample
+end
 
 puts "Creating Clients"
-User.all.each do |user|
-  FactoryGirl.create_list :client, 10, user: user
+User.where.not(id: [unclaimed_user.id]).each do |user|
+  FactoryGirl.create_list :client, 10, associated_user: user
+end
+Client.all.sample(5).each do |client|
+  existing_users = client.users
+  client.users << User.where.not(department: existing_users.map(&:department)).sample
 end
 
 puts "Creating Messages"
 Client.all.each do |client|
-  FactoryGirl.create_list :message, 10, user: client.user, client: client
+  FactoryGirl.create_list :message, 10, user: client.users.sample, client: client
 end
