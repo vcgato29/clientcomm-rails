@@ -66,7 +66,7 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'selenium-webdriver'
   gem 'webmock'
-  gem 'jasmine'
+  gem 'jasmine-rails'
   gem 'awesome_print'
   gem 'faker'
 end
