@@ -123,7 +123,7 @@ describe 'Clients requests', type: :request do
       let(:last_name) { Faker::Name.last_name }
 
       subject do
-        client = create :client, user: user
+        client = create :client, associated_user: user
 
         put client_path(client), params: {
           client: {
@@ -179,7 +179,7 @@ describe 'Clients requests', type: :request do
       let!(:another_client) { create :client }
 
       before do
-        create_list :client, 5, user: user
+        create_list :client, 5, associated_user: user
       end
 
       subject { get clients_path }
@@ -213,9 +213,9 @@ describe 'Clients requests', type: :request do
           FeatureFlag.create!(flag: 'client_status', enabled: true)
           ClientStatus.create!(name: 'Active', followup_date: 30)
 
-          create :client, user: user, client_status: ClientStatus.find_by_name('Active'), last_contacted_at: active_contacted_at
-          create :client, user: user, client_status: ClientStatus.find_by_name('Training'), last_contacted_at: training_contacted_at
-          create :client, user: user, client_status: ClientStatus.find_by_name('Exited'), last_contacted_at: exited_contacted_at
+          create :client, associated_user: user, client_status: ClientStatus.find_by_name('Active'), last_contacted_at: active_contacted_at
+          create :client, associated_user: user, client_status: ClientStatus.find_by_name('Training'), last_contacted_at: training_contacted_at
+          create :client, associated_user: user, client_status: ClientStatus.find_by_name('Exited'), last_contacted_at: exited_contacted_at
         end
 
         subject { get clients_path }
@@ -251,7 +251,7 @@ describe 'Clients requests', type: :request do
     end
 
     describe 'GET#edit' do
-      let(:client) { create :client, user: user }
+      let(:client) { create :client, associated_user: user }
 
       subject { get edit_client_path(client) }
 

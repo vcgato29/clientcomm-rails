@@ -73,7 +73,7 @@
                           <%= client.full_name %>
                         <% end %>
                       </td>
-                      <td data-timestamp="<%= client.timestamp %>" class="timestamp">
+                      <td data-timestamp="<%= client_timestamp(client, current_user) %>" class="timestamp">
                         <%= b.label(class: ['cell-content']) do %>
                           <%= client.last_contacted_at ? time_ago_in_words(client.last_contacted_at) : '--' %>
                         <% end %>

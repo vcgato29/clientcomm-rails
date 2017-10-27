@@ -5,13 +5,14 @@ class Client < ApplicationRecord
   has_many :messages, -> { order(created_at: :asc) }
   has_many :attachments, through: :messages
 
+  accepts_nested_attributes_for :reporting_relationships
+
   before_validation :normalize_phone_number, if: :phone_number_changed?
   validate :service_accepts_phone_number, if: :phone_number_changed?
 
   # TODO: rewrite this validator (or comparable logic in controller) when new reporting_relationships are in place
   # validate :phone_number_is_unused, if: :phone_number_changed?
 
-  validates :users, length: { minimum: 1 }
   validates_presence_of :last_name, :phone_number
 
   def analytics_tracker_data
@@ -30,11 +31,6 @@ class Client < ApplicationRecord
 
   def full_name
     "#{first_name} #{last_name}"
-  end
-
-  def timestamp
-    # TODO: This is for sort order on displaying client index and needs to be aware of its department
-    (last_contacted_at || created_at).to_time.to_i
   end
 
   def inbound_messages_count

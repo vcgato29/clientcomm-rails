@@ -50,7 +50,7 @@ describe 'Tracking of client analytics events', type: :request do
   context 'GET#edit' do
     it 'tracks a visit to the edit client form' do
       userone = create :user
-      clientone = create :client, user: userone
+      clientone = create :client, associated_user: userone
       sign_in userone
       get edit_client_path(clientone.id)
       expect(response.code).to eq '200'
@@ -61,10 +61,10 @@ describe 'Tracking of client analytics events', type: :request do
   context 'PATCH#update' do
     it 'tracks the updating of a client' do
       userone = create :user
-      clientone = create :client, user: userone
+      clientone = create :client, associated_user: userone
       sign_in userone
       # we'll patch clientone to match clientedit
-      clientedit = build :client, user: userone
+      clientedit = build :client, associated_user: userone
       edit_client clientone.id, clientedit
       expect(response.code).to eq '302'
       expect_analytics_events({

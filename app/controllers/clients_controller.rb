@@ -19,6 +19,7 @@ class ClientsController < ApplicationController
 
   def new
     @client = Client.new
+    @client.reporting_relationships << ReportingRelationship.new
 
     analytics_track(
       label: 'client_create_view'
@@ -27,10 +28,12 @@ class ClientsController < ApplicationController
 
   def create
     @client = Client.new(
-      user: current_user,
       first_name: client_params[:first_name],
       last_name: client_params[:last_name],
-      phone_number: client_params[:phone_number],
+      phone_number: client_params[:phone_number]
+    )
+    @client.reporting_relationships.build(
+      user: current_user,
       notes: client_params[:notes],
       client_status_id: client_params[:client_status_id]
     )
@@ -93,6 +96,6 @@ class ClientsController < ApplicationController
 
   def client_params
     params.fetch(:client)
-      .permit(:first_name, :last_name, :client_status_id, :phone_number, :notes)
+      .permit(:first_name, :last_name, :phone_number, reporting_relationships_attributes: [:notes, :client_status_id])
   end
 end

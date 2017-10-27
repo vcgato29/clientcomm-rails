@@ -10,13 +10,20 @@ module ApplicationHelper
     Message::OUTBOUND
   end
 
-  def client_messages_status(client)
-    if client.has_message_error
+  def client_messages_status(client, user)
+    relationship = client.reporting_relationships.find_by(reporting_relationships: { user: user })
+    if relationship.has_message_error
       Message::ERROR
-    elsif client.has_unread_messages
+    elsif relationship.has_unread_messages
       Message::UNREAD
     else
       Message::READ
     end
+  end
+
+  def client_timestamp(client, user)
+    relationship = client.reporting_relationships.find_by(reporting_relationships: { user: user })
+
+    (relationship.last_contacted_at || client.created_at).to_time.to_i
   end
 end
