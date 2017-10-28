@@ -46,7 +46,7 @@ end
 
 puts "Creating Clients"
 User.where.not(id: [unclaimed_user.id]).each do |user|
-  FactoryGirl.create_list :client, 10, associated_user: user
+  FactoryGirl.create_list :client, 10, user: user
 end
 Client.all.sample(5).each do |client|
   existing_users = client.users

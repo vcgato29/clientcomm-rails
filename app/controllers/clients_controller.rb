@@ -19,7 +19,7 @@ class ClientsController < ApplicationController
 
   def new
     @client = Client.new
-    @client.reporting_relationships << ReportingRelationship.new
+    @client.reporting_relationships.build
 
     analytics_track(
       label: 'client_create_view'
@@ -27,16 +27,9 @@ class ClientsController < ApplicationController
   end
 
   def create
-    @client = Client.new(
-      first_name: client_params[:first_name],
-      last_name: client_params[:last_name],
-      phone_number: client_params[:phone_number]
-    )
-    @client.reporting_relationships.build(
-      user: current_user,
-      notes: client_params[:notes],
-      client_status_id: client_params[:client_status_id]
-    )
+    @client = Client.new(client_params)
+
+    # binding.pry
 
     if @client.save
       analytics_track(
@@ -68,6 +61,7 @@ class ClientsController < ApplicationController
 
   def edit
     @client = current_user.clients.find(params[:id])
+    @reporting_relationship = client.reporting_relationships.find_by_user_id(current_user.id)
 
     analytics_track(
       label: 'client_edit_view',
@@ -96,6 +90,13 @@ class ClientsController < ApplicationController
 
   def client_params
     params.fetch(:client)
-      .permit(:first_name, :last_name, :phone_number, reporting_relationships_attributes: [:notes, :client_status_id])
+          .permit(
+            :first_name,
+            :last_name,
+            :phone_number,
+            reporting_relationships_attributes: %i[
+              user_id notes client_status_id
+            ]
+          )
   end
 end

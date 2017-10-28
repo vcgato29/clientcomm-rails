@@ -1,9 +1,9 @@
 FactoryGirl.define do
   factory :reporting_relationship do
-    user { user }
-    client { client }
+    user { nil }
+    client { nil }
     client_status { ClientStatus.all.sample }
-    sequence(:notes) { Faker::Lorem.sentence }
-    active true
+    notes { Faker::Lorem.sentence }
+    active { true }
   end
 end

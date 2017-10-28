@@ -5,11 +5,13 @@ FactoryGirl.define do
     phone_number { "+1760555#{Faker::PhoneNumber.unique.subscriber_number}" }
 
     transient do
-      associated_user { create(:user) }
+      active { true }
+      user { create(:user) }
     end
 
-    after(:build) do |client, evaluator|
-      client.users << evaluator.associated_user
+    after(:create) do |client, evaluator|
+      client.users << evaluator.user
+      client.reporting_relationships.first.update(active: evaluator.active)
     end
   end
 end
