@@ -1,7 +1,7 @@
 class ReportingRelationship < ApplicationRecord
   belongs_to :user
   belongs_to :client
-  has_one :client_status
+  belongs_to :client_status
   has_one :department, through: :user
 
   validates_presence_of :client
