@@ -1,56 +1,31 @@
-ActiveAdmin.register Client do
-  menu priority: 4
+ActiveAdmin.register ReportingRelationship, as: 'Parolees' do
+  menu parent: 'Clients'
 
-  config.sort_order = 'last_name_asc'
+  # config.sort_order = 'client_last_name_asc'
 
   permit_params :first_name, :last_name, :phone_number, :notes, :active, :client_status_id, user_ids: []
 
-  scope :all, default: true
-  Department.all.each do |department|
-    scope department.name
-  end
-
   index do
     selectable_column
-    column :full_name, sortable: :last_name
-
-    column 'Departments' do |client|
-      active_users = client.users
-                           .joins(:reporting_relationships)
-                           .joins(:department)
-                           .where(reporting_relationships: { active: true })
-                           .order('departments.name ASC')
-                           .distinct
-                           .pluck('departments.name')
-
-      active_users.join(', ')
+    column :full_name, sortable: :client_last_name do |rr|
+      rr.client&.full_name
     end
 
-    column 'Users' do |client|
-      active_users = client.users
-                           .joins(:reporting_relationships)
-                           .joins(:department)
-                           .where(reporting_relationships: { active: true })
-                           .order('departments.name ASC')
-                           .distinct
-                           .pluck(:full_name, 'departments.name')
-
-      active_users.map { |u| u[0] }.join(', ')
-    end
-    current_scope = params['scope']
-    if (department = Department.find_by(Department.arel_table[:name].matches(current_scope)))
-      column :active_in_selected_department do |client|
-        client.reporting_relationships.find_by(user: department.users).present?
-      end
+    column 'Department' do |rr|
+      rr.user&.department
     end
 
-    column :phone_number
+    column :user
+    column :active
+    column :phone_number do |rr|
+      rr.client&.phone_number
+    end
     actions
   end
 
   show do
     panel 'Client Details' do
-      attributes_table_for client do
+      attributes_table_for rr do
         row :first_name
         row :last_name
         row :phone_number
@@ -83,13 +58,14 @@ ActiveAdmin.register Client do
 
   actions :all, :except => [:destroy]
 
-  filter :reporting_relationships_user_id,
+  filter :user_id,
          as: :select,
          collection: proc { User.all.order(full_name: :asc) },
          label: 'User'
-  filter :first_name_cont, label: 'Client first name'
-  filter :last_name_cont, label: 'Client last name'
-  filter :phone_number_cont, label: 'Phone Number'
+  filter :client_first_name_cont, label: 'Client first name'
+  filter :client_last_name_cont, label: 'Client last name'
+  filter :client_phone_number_cont, label: 'Phone Number'
+  filter :active
 
   form do |f|
     f.inputs 'Client Info' do
@@ -113,13 +89,11 @@ ActiveAdmin.register Client do
             active_user.try(:id)
           )
 
-          f.input :users, {
-            label: "#{department.name} user:",
-            as: :select,
-            collection: options,
-            include_blank: true,
-            input_html: { multiple: false, id: "user_in_dept_#{department.id}" }
-          }
+          f.input :users, label: "#{department.name} user:",
+                          as: :select,
+                          collection: options,
+                          include_blank: true,
+                          input_html: { multiple: false, id: "user_in_dept_#{department.id}" }
         else # EDIT
           li do
             label "#{department.name} user:"
@@ -142,6 +116,10 @@ ActiveAdmin.register Client do
   end
 
   controller do
+    def scoped_collection
+      ReportingRelationship.joins(:user).where(users: { department_id: 3 })
+    end
+
     def index
       params[:q][:phone_number_cont] = params[:q][:phone_number_cont].gsub(/\D/, '') if params[:q].try(:[], :phone_number_cont)
 
