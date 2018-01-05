@@ -273,8 +273,7 @@ describe 'Clients requests', type: :request do
               },
               surveys_attributes: {
                 '0': {
-                  response_ids: [1, 2, 3]
-                  # collection of IDs of survey responses
+                  survey_response_ids: [survey_response1.id, survey_response2.id, survey_response3.id]
                 }
               }
             }
