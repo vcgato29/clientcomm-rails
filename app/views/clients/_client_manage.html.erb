@@ -3,17 +3,20 @@
     <h1 class="form-card__title">Manage</h1>
   </div>
   <div class="form-card__content">
-    <h4>Download transcript</h4>
-    <p>You can download a text file with a transcript of your message history with <%= "#{@client.first_name} #{@client.last_name}" %>.</p>
-    <a href="<%= client_messages_download_path(@client) %>">
-      <button class="button">Download transcript <i class="button__icon icon-get_app"></i></button>
-    </a>
-    <h4>Delete client</h4>
-    <p>
-      When a client leaves your caseload you can delete them from your contact list.
-      If they send you a message later they will automatically return to your contact list.
-    </p>
-    <%= form_for @client, html: { id: :survey } do |client_form| %>
+    <div>
+      <h4>Download transcript</h4>
+      <p>You can download a text file with a transcript of your message history with <%= "#{@client.first_name} #{@client.last_name}" %>.</p>
+      <a href="<%= client_messages_download_path(@client) %>">
+        <button class="button">Download transcript <i class="button__icon icon-get_app"></i></button>
+      </a>
+    </div>
+    <%= form_for @client do |client_form| %>
+      <h4>Delete client</h4>
+      <p>
+        When a client leaves your caseload you can delete them from your contact list.
+        If they send you a message later they will automatically return to your contact list.
+      </p>
+      <div id='survey' class='notice'>
         <%= client_form.fields_for :reporting_relationships, @reporting_relationship do |rr_fields| %>
           <%= rr_fields.hidden_field :active, value: false %>
         <% end %>
@@ -38,6 +41,7 @@
             <% end %>
           <% end %>
         <% end %>
+      </div>
       <%= client_form.submit "Delete #{@client.first_name} #{@client.last_name}", id: :deactivate_client, class: :button %>
     <% end %>
 

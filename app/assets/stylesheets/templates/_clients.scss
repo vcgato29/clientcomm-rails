@@ -63,6 +63,7 @@
 #survey {
   display: none;
   padding: 20px;
+  margin-top: 20px;
 
   .question-text {
     font-weight: bold;
@@ -83,4 +84,8 @@
       margin: 0px 5px;
     }
   }
+}
+
+#deactivate_client:disabled {
+  opacity: 0.5;
 }
