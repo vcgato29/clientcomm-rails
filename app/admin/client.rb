@@ -1,52 +1,9 @@
 ActiveAdmin.register Client do
-  menu priority: 4
+  menu false
 
   config.sort_order = 'last_name_asc'
 
   permit_params :first_name, :last_name, :phone_number, :notes, :active, :client_status_id, user_ids: []
-
-  scope :all, default: true
-  Department.all.each do |department|
-    scope department.name
-  end
-
-  index do
-    selectable_column
-    column :full_name, sortable: :last_name
-
-    column 'Departments' do |client|
-      active_users = client.users
-                           .joins(:reporting_relationships)
-                           .joins(:department)
-                           .where(reporting_relationships: { active: true })
-                           .order('departments.name ASC')
-                           .distinct
-                           .pluck('departments.name')
-
-      active_users.join(', ')
-    end
-
-    column 'Users' do |client|
-      active_users = client.users
-                           .joins(:reporting_relationships)
-                           .joins(:department)
-                           .where(reporting_relationships: { active: true })
-                           .order('departments.name ASC')
-                           .distinct
-                           .pluck(:full_name, 'departments.name')
-
-      active_users.map { |u| u[0] }.join(', ')
-    end
-    current_scope = params['scope']
-    if (department = Department.find_by(Department.arel_table[:name].matches(current_scope)))
-      column :active_in_selected_department do |client|
-        client.reporting_relationships.find_by(user: department.users).present?
-      end
-    end
-
-    column :phone_number
-    actions
-  end
 
   show do
     panel 'Client Details' do
@@ -68,7 +25,7 @@ ActiveAdmin.register Client do
       next unless user
       panel "#{user.department.name}: #{user.full_name}" do
         attributes_table_for client.reporting_relationship(user: user) do
-          row :active
+          row :active, &:active
           row :notes
           row(:created_at) { |rr| rr.created_at&.strftime('%B %d, %Y %l:%M %Z') }
           row(:last_contacted_at) { |rr| rr.last_contacted_at&.strftime('%B %d, %Y %l:%M %Z') }

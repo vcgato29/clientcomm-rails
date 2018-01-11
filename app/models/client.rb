@@ -1,7 +1,7 @@
 class Client < ApplicationRecord
   has_many :reporting_relationships, dependent: :nullify
   has_many :users, through: :reporting_relationships
-  has_many :messages, -> { order(send_at: :asc) }
+  has_many :messages, -> { order(send_at: :asc) }, inverse_of: :client
   has_many :attachments, through: :messages
 
   scope :active, lambda {
