@@ -135,7 +135,7 @@ describe 'ReportingRelationships', type: :request, active_job: true do
 
 						emails = ActionMailer::Base.deliveries
 						email = emails.first
-						expect(email.body).not_to include 'message-well'
+						expect(email.body.encoded).to_not include 'message-well'
 						to_addrs = emails.map(&:to)
 						expect(to_addrs).to contain_exactly([user2.email])
 					end
